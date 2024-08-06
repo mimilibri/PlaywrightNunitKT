@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
 using NUnit.Framework.Legacy;
 
@@ -8,11 +9,12 @@ namespace PlaywrightNunitKT
     public class Tests
     {
         public IBrowser? Browser { get; set; }
-        public IPage Page { get; set; }
+        public IPage Page { get; set; }        
 
         [OneTimeSetUp]
         public async Task OneTimeSetup()
-        {
+        {            
+
             var configurationBuilder = new ConfigurationBuilder()
             
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -31,22 +33,13 @@ namespace PlaywrightNunitKT
         }
 
         [SetUp]
-        public async Task SetUp()
-        {
-            Page = await Browser.NewPageAsync();
-        }
+        public async Task SetUp() => Page = await Browser!.NewPageAsync();
 
         [TearDown]
-        public async Task TearDown()
-        {
-            await Page.CloseAsync();
-        }
+        public async Task TearDown() => await Page.CloseAsync();
 
         [OneTimeTearDown]
-        public async Task OneTimeTeardown()
-        {
-            await Browser.CloseAsync();
-        }
+        public async Task OneTimeTeardown() => await Browser!.CloseAsync();
 
         [Test]
         public async Task GoToInitialTest()
@@ -54,7 +47,7 @@ namespace PlaywrightNunitKT
             await Page.GotoAsync("https://www.google.co.uk");
             var title = await Page.TitleAsync();
 
-            ClassicAssert.AreEqual("Google", title);
+            Assert.That(title, Is.EqualTo("Google"));
         }
 
         [Test]
