@@ -11,25 +11,24 @@ namespace PlaywrightNunitKT
         [OneTimeSetUp]
         public async Task OneTimeSetup()
         {
-            var playwright =await Playwright.CreateAsync();
+            var playwright = await Playwright.CreateAsync();
             Browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
             {
                 Headless = false,
             });
-           
         }
+
         [SetUp]
         public async Task SetUp()
         {
             Page = await Browser.NewPageAsync();
         }
-        [TearDown]
-        public  async Task TearDown()
-        {
-             await Page.CloseAsync();
-        }
 
-        
+        [TearDown]
+        public async Task TearDown()
+        {
+            await Page.CloseAsync();
+        }
 
         [OneTimeTearDown]
         public async Task OneTimeTeardown()
@@ -38,13 +37,21 @@ namespace PlaywrightNunitKT
         }
 
         [Test]
-
-        public async Task GoToInitialTest ()
+        public async Task GoToInitialTest()
         {
             await Page.GotoAsync("https://www.google.co.uk");
             var title = await Page.TitleAsync();
 
             ClassicAssert.AreEqual("Google", title);
+        }
+
+        [Test]
+        public async Task SearchForSomething ()
+        {
+            await Page.GotoAsync("https://www.google.co.uk");
+            await Page.FillAsync(".gLFyf", "Playwright.net docs");
+            await Page.ClickAsync(".gNO89b");
+            Thread.Sleep(4000);
         }
 
         
