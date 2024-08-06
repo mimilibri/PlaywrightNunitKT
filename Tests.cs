@@ -1,5 +1,7 @@
+using Microsoft.Extensions.Configuration;
 using Microsoft.Playwright;
 using NUnit.Framework.Legacy;
+
 
 namespace PlaywrightNunitKT
 {
@@ -11,10 +13,20 @@ namespace PlaywrightNunitKT
         [OneTimeSetUp]
         public async Task OneTimeSetup()
         {
+            var configurationBuilder = new ConfigurationBuilder()
+            
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json",reloadOnChange:true,optional:false)
+                .Build();
+           
+           
             var playwright = await Playwright.CreateAsync();
             Browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
             {
-                Headless = false,
+                Headless = configurationBuilder.GetValue("Headless",defaultValue:false),
+                Channel = configurationBuilder.GetValue("Channel", defaultValue: "chrome"),
+                Timeout = configurationBuilder.GetValue("Timeout", defaultValue: 0),
+
             });
         }
 
